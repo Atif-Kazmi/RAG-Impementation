@@ -1,5 +1,5 @@
 streamlit
-sentence-transformers==2.2.2  # Specify a stable version
-transformers==4.6.1
-scikit-learn==0.24.2
-PyPDF2==1.26.0
+transformers
+scikit-learn
+numpy
+PyPDF2
