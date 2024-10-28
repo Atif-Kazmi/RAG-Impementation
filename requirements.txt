@@ -1,0 +1,4 @@
+streamlit
+sentence_transformers
+groq
+PyPDF2
