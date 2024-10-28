@@ -1,13 +1,12 @@
 # Required imports
 import streamlit as st
-from transformers import DistilBertTokenizer, DistilBertModel
+from transformers import pipeline
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 from PyPDF2 import PdfReader
 
-# Initialize model and tokenizer
-tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-model = DistilBertModel.from_pretrained('distilbert-base-uncased')
+# Initialize transformer pipeline
+embedder = pipeline("feature-extraction", model="sentence-transformers/paraphrase-MiniLM-L6-v2")
 
 # Knowledge base (documents) and embeddings
 documents = [
@@ -20,16 +19,15 @@ documents = [
 
 # Function to encode documents
 def encode_text(text):
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
-    outputs = model(**inputs)
-    return outputs.last_hidden_state.mean(dim=1).detach().numpy()
+    embeddings = embedder(text, truncation=True, padding=True, max_length=512)
+    return np.mean(embeddings[0], axis=0)  # Average embeddings for simplicity
 
 document_embeddings = [encode_text(doc) for doc in documents]
 
 # Function to retrieve top relevant document
 def retrieve(query, top_k=1):
     query_embedding = encode_text(query)
-    similarities = cosine_similarity(query_embedding, np.vstack(document_embeddings))
+    similarities = cosine_similarity([query_embedding], document_embeddings)
     top_idx = similarities.argsort()[0][-top_k:][::-1]  # Get top_k indices
     top_docs = [documents[idx] for idx in top_idx]
     return top_docs[0] if top_docs else None
