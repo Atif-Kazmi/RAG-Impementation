@@ -7,7 +7,7 @@ from PyPDF2 import PdfReader
 
 # Hugging Face API setup
 API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/paraphrase-MiniLM-L6-v2"
-headers = {"Authorization": f"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"}  # Replace with your Hugging Face API token
+headers = {"Authorization": f"Bearer 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"}  # Replace with your Hugging Face API token
 
 # Knowledge base (documents) and embeddings
 documents = [
@@ -18,11 +18,22 @@ documents = [
     "Common use cases of RAG include chatbots, customer support systems, and knowledge retrieval for business intelligence."
 ]
 
-# Function to encode text using Hugging Face Inference API
+# Function to encode text using Hugging Face Inference API with error handling
 def encode_text(text):
-    response = requests.post(API_URL, headers=headers, json={"inputs": text, "options": {"wait_for_model": True}})
-    embeddings = response.json()[0] if response.status_code == 200 else None
-    return np.mean(embeddings, axis=0) if embeddings else None
+    try:
+        response = requests.post(API_URL, headers=headers, json={"inputs": text, "options": {"wait_for_model": True}})
+        response.raise_for_status()  # This will raise an error for any 4xx or 5xx response
+        embeddings = response.json()[0]
+        
+        # Verify that embeddings were returned
+        if embeddings:
+            return np.mean(embeddings, axis=0)
+        else:
+            st.write("Error: No embeddings found for the given text.")
+            return None
+    except requests.exceptions.RequestException as e:
+        st.write("API request failed:", e)
+        return None
 
 # Precompute embeddings for documents
 document_embeddings = [encode_text(doc) for doc in documents]
