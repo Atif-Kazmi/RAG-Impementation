@@ -1,5 +1,4 @@
 streamlit
 sentence-transformers
-torch  # SentenceTransformer may require PyTorch for embeddings
-PyPDF2  # For PDF handling
-groqflow  # For interacting with Groq API, assuming this is the package name
+torch==1.12.1  # Adjust if needed
+PyPDF2
