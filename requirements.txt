@@ -1,6 +1,5 @@
 streamlit
-sentence-transformers
-torch==1.10.1+cpu  # Compatible with most Streamlit environments; use CPU-only version for cloud deployment
-transformers
-scikit-learn
-PyPDF2
+sentence-transformers==2.2.2  # Specify a stable version
+transformers==4.6.1
+scikit-learn==0.24.2
+PyPDF2==1.26.0
