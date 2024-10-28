@@ -1,6 +1,12 @@
-# Initialize the retriever and Groq client
+# Required imports
+import streamlit as st
+from sentence_transformers import SentenceTransformer, util
+from PyPDF2 import PdfReader
+import torch
+
+# Initialize retriever and Groq client
 retriever = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-client = Groq(api_key="Your API Key here")
+client = Groq(api_key="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")
 
 # Knowledge base (documents) and embeddings
 documents = [
